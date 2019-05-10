@@ -1,0 +1,39 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.cloudogu.k8s'
+version = '0.0.10'
+sourceCompatibility = '1.8'
+
+bootJar {
+    launchScript()
+}
+
+processResources {
+    filesMatching('application.properties') {
+        expand(project.properties)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-core'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-starter:2.0.0'
+    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.0'
+    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:2.0.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

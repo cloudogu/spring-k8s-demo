@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:utext="${title}"></title>
+</head>
+<body>
+<h1 th:utext="${title}"></h1>
+<table>
+    <tr>
+        <th>Hostname</th>
+        <td th:utext="${hostname}"></td>
+    </tr>
+    <tr>
+        <th>Version</th>
+        <td th:utext="${version}"></td>
+    </tr>
+    <tr>
+        <th>Started at</th>
+        <td th:utext="${startedAt}"></td>
+    </tr>
+</table>
+
+<h2>Greeting</h2>
+<ul>
+    <li>
+        <a href="/greeting">Greeting</a>
+    </li>
+</ul>
+
+<h2>Info</h2>
+<ul>
+    <li>
+        <a href="/info/hostname">Hostname</a>
+    </li>
+    <li>
+        <a href="/info/version">Version</a>
+    </li>
+</ul>
+
+<h2>Math</h2>
+<ul>
+    <li>
+        <a href="/math/add?a=21&b=21">Add</a>
+    </li>
+    <li>
+        <a href="/math/random">Random</a>
+    </li>
+    <li>
+        <a href="/math/sqrt">Sqrt</a>
+    </li>
+</ul>
+
+<h2>Faulty</h2>
+<ul>
+    <li>
+        <a href="/faulty/random">Random</a>
+    </li>
+</ul>
+
+<h2>Remote</h2>
+<ul>
+    <li>
+        <a href="/remote/add-sequential">Add - Sequential</a>
+    </li>
+
+    <li>
+        <a href="/remote/add-parallel">Add - Parallel</a>
+    </li>
+</ul>
+
+<h2>Actuator</h2>
+<ul>
+    <li>
+        <a href="/actuator/prometheus">Prometheus Metrics</a>
+    </li>
+</ul>
+
+</body>
+</html>

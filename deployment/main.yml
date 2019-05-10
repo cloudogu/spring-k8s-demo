@@ -1,0 +1,11 @@
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  path: /
+
+remote:
+  services:
+    - one-spring-k8s-demo
+    - two-spring-k8s-demo
+    - three-spring-k8s-demo
