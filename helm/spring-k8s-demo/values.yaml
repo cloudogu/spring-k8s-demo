@@ -6,11 +6,20 @@ replicaCount: 1
 
 image:
   repository: cloudogu/spring-k8s-demo
-  tag: 0.0.10
+  tag: 0.0.11
   pullPolicy: IfNotPresent
 
 nameOverride: ""
 fullnameOverride: ""
+
+jaeger:
+  host: jaeger-agent.kube-system
+  port: 6831
+  samplingRate: 1.0
+  enabled: true
+
+istio:
+  auth: false
 
 service:
   type: ClusterIP
@@ -41,7 +50,7 @@ resources:
   #  cpu: 100m
   #  memory: 128Mi
   requests:
-    cpu: 200m
+    cpu: 100m
     #memory: 128Mi
 
 nodeSelector: {}

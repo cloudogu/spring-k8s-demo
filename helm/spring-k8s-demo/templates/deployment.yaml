@@ -23,6 +23,7 @@ spec:
         app: {{ include "spring-k8s-demo.name" . }}
         release: {{ .Release.Name }}
     spec:
+      serviceAccountName: {{ include "spring-k8s-demo.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -30,12 +31,34 @@ spec:
           env:
           - name: REMOTE_SERVICES
             value: '{{- join "," .Values.remote.services -}}'
+          {{- if .Values.jaeger.enabled }}
           - name: JAVA_OPTS
-            value: "-Dopentracing.jaeger.enabled=true -Dopentracing.jaeger.serviceName={{ .Release.Name }} -Dopentracing.jaeger.udp-sender.host=jaeger-agent.kube-system -Dopentracing.jaeger.udp-sender.port=6831 -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=1.0"
+            value: "-Dopentracing.jaeger.enabled=true -Dopentracing.jaeger.serviceName={{ .Release.Name }} -Dopentracing.jaeger.udp-sender.host={{ .Values.jaeger.host }} -Dopentracing.jaeger.udp-sender.port={{ .Values.jaeger.port }} -Dopentracing.jaeger.enable-b3-propagation=true -Dopentracing.jaeger.probabilistic-sampler.sampling-rate={{ .Values.jaeger.samplingRate }}"
+          {{- end }}
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
+          {{- if .Values.istio.auth }}
+          livenessProbe:
+            exec:
+              command:
+              - curl
+              - -f
+              - http://localhost:8080/healthz
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+              - curl
+              - -f
+              - http://localhost:8080/healthz
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+          {{- else }}
           livenessProbe:
             httpGet:
               path: /healthz
@@ -50,6 +73,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
             failureThreshold: 6
+          {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}

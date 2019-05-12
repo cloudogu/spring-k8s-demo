@@ -1,0 +1,26 @@
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRole
+metadata:
+  name: main-role
+  namespace: default
+spec:
+  rules:
+  - services:
+    - one-spring-k8s-demo.default.svc.cluster.local
+    - two-spring-k8s-demo.default.svc.cluster.local
+    - three-spring-k8s-demo.default.svc.cluster.local
+    methods: ["GET"]
+    paths: ["*"]
+---
+apiVersion: "rbac.istio.io/v1alpha1"
+kind: ServiceRoleBinding
+metadata:
+  name: main-role-binding
+  namespace: default
+spec:
+  subjects:
+  - user: "cluster.local/ns/default/sa/main-spring-k8s-demo"
+  roleRef:
+    kind: ServiceRole
+    name: main-role
