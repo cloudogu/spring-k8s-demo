@@ -1,0 +1,26 @@
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: main-spring-k8s-demo-promql
+  annotations:
+    # metric-config.<metricType>.<metricName>.<collectorName>/<configKey>
+    metric-config.object.processed-requests.prometheus/query: |
+      sum(rate(http_server_requests_seconds_count{app="spring-k8s-demo"}[5m])) / count(count(http_server_requests_seconds_count{app="spring-k8s-demo"}) by (kubernetes_pod_name))
+    metric-config.object.processed-requests.prometheus/per-replica: "true"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: main-spring-k8s-demo
+  minReplicas: 1
+  maxReplicas: 6
+  metrics:
+  - type: Object
+    object:
+      metricName: processed-requests
+      # required by schema
+      target:
+        apiVersion: v1
+        kind: Pod
+        name: dummy-pod
+      targetValue: 2 # this will be treated as targetAverageValue
