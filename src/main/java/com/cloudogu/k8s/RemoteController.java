@@ -138,6 +138,18 @@ public class RemoteController {
         return "" + queryRemoteService(svc, "/faulty/counter-slow");
     }
 
+    @Timed("remote_hostname")
+    @GetMapping("/remote/hostname/{svc}")
+    public String remoteHostname(@PathVariable("svc") String svc) {
+        LOG.info("remote hostname {svc}");
+
+        if (!remoteServices.contains(svc)) {
+            throw new IllegalArgumentException("unknown service " + svc);
+        }
+
+        return "remote hostname: " + queryRemoteService(svc, "/info/hostname", String.class);
+    }
+
     private Callable<Integer> queryRemoteServiceCallable(String serviceName) {
         return () -> queryRemoteService(serviceName, "/math/random");
     }
@@ -151,9 +163,13 @@ public class RemoteController {
     }
 
     private Integer queryRemoteService(String serviceName, String suffix) {
+        return queryRemoteService(serviceName, suffix, Integer.class);
+    }
+
+    private <T> T queryRemoteService(String serviceName, String suffix, Class<T> type) {
         String url = createURL(serviceName, suffix);
         LOG.info("query remote url {}", url);
-        return restTemplate.getForObject(url, Integer.class);
+        return restTemplate.getForObject(url, type);
     }
 
     private String createURL(String serviceName, String suffix) {

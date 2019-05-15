@@ -1,7 +1,10 @@
 # Installation
 
 ```bash
-curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.1.6 sh 
+kubectl apply -f deployments/rbac.yml
+helm init --service-account tiller
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.1.6 sh
+cd istio-1.1.6
 helm install install/kubernetes/helm/istio-init --name istio-init --namespace istio-system
 
 # verify crd installation, should be 53
@@ -50,3 +53,9 @@ kubectl port-forward -n istio-system $(kubectl get pod -n istio-system -l app=gr
 # prometheus
 kubectl port-forward -n istio-system $(kubectl get pod -n istio-system -l app=prometheus -o jsonpath='{.items[0].metadata.name}') 9090
 ```
+
+### Notes
+
+* Timeouts: with timeout.yml and /remote/counter-slow/one-spring-k8s-demo
+* Retries: with retry.yml and /remote/counter/two-spring-k8s-demo
+* Routing: with 50-50-split.yml  and /remote/hostname/three-spring-k8s-demo
