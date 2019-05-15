@@ -113,6 +113,31 @@ public class RemoteController {
         return "" + queryRemoteService(svc, "/faulty/fail");
     }
 
+    @Timed("remote_slow")
+    @GetMapping("/remote/slow/{svc}")
+    public String remoteSlow(@PathVariable("svc") String svc) {
+        LOG.info("remote slow {svc}");
+
+        if (!remoteServices.contains(svc)) {
+            throw new IllegalArgumentException("unknown service " + svc);
+        }
+
+        return "" + queryRemoteService(svc, "/faulty/slow");
+    }
+
+
+    @Timed("remote_counter_slow")
+    @GetMapping("/remote/counter-slow/{svc}")
+    public String remoteCounterSlow(@PathVariable("svc") String svc) {
+        LOG.info("remote counter-slow {svc}");
+
+        if (!remoteServices.contains(svc)) {
+            throw new IllegalArgumentException("unknown service " + svc);
+        }
+
+        return "" + queryRemoteService(svc, "/faulty/counter-slow");
+    }
+
     private Callable<Integer> queryRemoteServiceCallable(String serviceName) {
         return () -> queryRemoteService(serviceName, "/math/random");
     }

@@ -6,6 +6,8 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
 @SpringBootApplication
 public class SpringDemoApplication {
 
@@ -15,6 +17,9 @@ public class SpringDemoApplication {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-        return restTemplateBuilder.build();
+        return restTemplateBuilder
+                .setReadTimeout(Duration.ofSeconds(60L))
+                .setConnectTimeout(Duration.ofSeconds(60L))
+                .build();
     }
 }
