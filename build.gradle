@@ -6,7 +6,7 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.cloudogu.k8s'
-version = '0.0.11'
+version = '0.0.12'
 sourceCompatibility = '1.8'
 
 bootJar {
