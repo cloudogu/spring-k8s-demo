@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -76,6 +77,42 @@ public class RemoteController {
         return "" + result;
     }
 
+    @Timed("remote_counter")
+    @GetMapping("/remote/counter/{svc}")
+    public String remoteCount(@PathVariable("svc") String svc) {
+        LOG.info("remote count {svc}");
+
+        if (!remoteServices.contains(svc)) {
+            throw new IllegalArgumentException("unknown service " + svc);
+        }
+
+        return "" + queryRemoteService(svc, "/faulty/counter");
+    }
+
+    @Timed("remote_random")
+    @GetMapping("/remote/random/{svc}")
+    public String remoteRandom(@PathVariable("svc") String svc) {
+        LOG.info("remote count {svc}");
+
+        if (!remoteServices.contains(svc)) {
+            throw new IllegalArgumentException("unknown service " + svc);
+        }
+
+        return "" + queryRemoteService(svc, "/faulty/random");
+    }
+
+    @Timed("remote_fail")
+    @GetMapping("/remote/fail/{svc}")
+    public String remoteFail(@PathVariable("svc") String svc) {
+        LOG.info("remote fail {svc}");
+
+        if (!remoteServices.contains(svc)) {
+            throw new IllegalArgumentException("unknown service " + svc);
+        }
+
+        return "" + queryRemoteService(svc, "/faulty/fail");
+    }
+
     private Callable<Integer> queryRemoteServiceCallable(String serviceName) {
         return () -> queryRemoteService(serviceName, "/math/random");
     }
@@ -89,12 +126,12 @@ public class RemoteController {
     }
 
     private Integer queryRemoteService(String serviceName, String suffix) {
-        String url = createRandomURL(serviceName, suffix);
+        String url = createURL(serviceName, suffix);
         LOG.info("query remote url {}", url);
         return restTemplate.getForObject(url, Integer.class);
     }
 
-    private String createRandomURL(String serviceName, String suffix) {
+    private String createURL(String serviceName, String suffix) {
         return "http://" + serviceName + suffix;
     }
 }
